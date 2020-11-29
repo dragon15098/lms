@@ -1,0 +1,12 @@
+<mat-tab-group [selectedIndex]="selectedIndex" (selectedTabChange)="onTabChange($event)">
+  <mat-tab label="Course">
+    <app-create-course [courseObservable]="courseObservable" (nextTab)="changeTabSection($event)"></app-create-course>
+  </mat-tab>
+  <mat-tab [disabled]="disable" label="Lesson And Quiz">
+    <app-create-section [section]="section" [course]="courseObservable"
+                        (nextTab)="changeTabLesson($event)"></app-create-section>
+  </mat-tab>
+  <mat-tab [disabled]="true" label="Lesson Quiz">
+    <app-create-lesson [lesson]="lesson"></app-create-lesson>
+  </mat-tab>
+</mat-tab-group>

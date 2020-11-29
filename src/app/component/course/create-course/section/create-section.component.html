@@ -1,0 +1,169 @@
+<h1>Section detail</h1>
+<form [formGroup]="sectionForm">
+  <mat-form-field  style="padding: 0 0 0 10px" appearance="fill">
+    <mat-label>Section title</mat-label>
+    <label>
+      <input matInput placeholder="Section title" formControlName="sectionTitle" required>
+    </label>
+  </mat-form-field>
+
+  <h1>Lessons</h1>
+
+  <div class="container" style="padding: 0 0 0 10px">
+    <button type="button" [disabled]="submitted" (click)="onClickAddNewLesson()" class="center" mat-raised-button
+            color="primary">Add new lesson
+    </button>
+  </div>
+  <br>
+  <div class="mat-elevation-z8" style="margin: 20px">
+    <table mat-table [dataSource]="dataSource" formArrayName="lessons"
+           class="mat-elevation-z8">
+      <ng-container matColumnDef="index">
+        <th mat-header-cell *matHeaderCellDef> No.</th>
+        <td mat-cell *matCellDef="let i = index"> {{ i + 1 + "." }}</td>
+      </ng-container>
+
+      <!-- Column definitions -->
+      <ng-container matColumnDef="lessonTitle">
+        <th mat-header-cell *matHeaderCellDef>Lesson title</th>
+        <td mat-cell *matCellDef="let index = index" [formGroupName]="index">
+          <mat-form-field appearance="fill">
+            <mat-label>Title</mat-label>
+            <label>
+              <input matInput placeholder="title" formControlName="lessonTitle" required>
+            </label>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let i = index">
+          <button type="button" (click)="onClickEditLesson(i)" mat-button>Edit lesson</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef=" let i = index; columns: displayedColumns;" [formGroupName]="i"></tr>
+    </table>
+  </div>
+  <br>
+  <h1> Quiz</h1>
+  <div formGroupName="quiz">
+    <div class="container" style="padding: 0 0 0 10px">
+      <mat-form-field appearance="fill">
+        <mat-label>Quiz title</mat-label>
+        <label>
+          <input formControlName="quizTitle" matInput placeholder="Quiz title">
+        </label>
+      </mat-form-field>
+    </div>
+    <h1> Quiz question</h1>
+    <div class="button-wrapper">
+      <button [disabled]="submitted" (click)="onClickAddNewQuestion()" class="center" mat-raised-button color="primary">
+        Create quiz question
+      </button>
+    </div>
+    <br>
+
+    <div class="mat-elevation-z8" style="margin: 20px">
+      <table mat-table [dataSource]="quizSource" multiTemplateDataRows formArrayName="quizQuestions"
+             class="mat-elevation-z8">
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef> No.</th>
+          <td mat-cell *matCellDef="let i = dataIndex"> {{ i + 1 + "." }}</td>
+        </ng-container>
+        <ng-container matColumnDef="question">
+          <th mat-header-cell *matHeaderCellDef> Question</th>
+          <td mat-cell *matCellDef="let element; let i = dataIndex" [formGroupName]="i">
+            <mat-form-field appearance="fill">
+              <mat-label>Question title</mat-label>
+              <label>
+                <input formControlName="questionTitle" matInput placeholder="Question title" required>
+              </label>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Column definitions -->
+        <ng-container matColumnDef="expandedDetail">
+          <th mat-header-cell *matHeaderCellDef>Lesson title</th>
+          <td mat-cell *matCellDef="let i = dataIndex; let element" [attr.colspan]="quizDisplayedColumns.length"
+              [formGroupName]="i">
+            <div class="example-element-detail"
+                 [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+              <mat-form-field appearance="fill">
+                <mat-label>Question</mat-label>
+                <label>
+                  <input formControlName="question" matInput placeholder="Question" required>
+                </label>
+              </mat-form-field>
+              <div style="display: flex" formArrayName="quizAnswers">
+                <div formGroupName="0">
+                  <mat-form-field appearance="fill">
+                    <mat-label>First answer</mat-label>
+                    <label>
+                      <input matInput placeholder="First answer" formControlName="content" required>
+                    </label>
+                  </mat-form-field>
+                </div>
+                <div formGroupName="1">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Second answer</mat-label>
+                    <label>
+                      <input matInput placeholder="Second answer" formControlName="content" required>
+                    </label>
+                  </mat-form-field>
+                </div>
+                <div formGroupName="2">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Third answer</mat-label>
+                    <label>
+                      <input matInput placeholder="Third answer" formControlName="content" required>
+                    </label>
+                  </mat-form-field>
+                </div>
+                <div formGroupName="3">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Fourth answer</mat-label>
+                    <label>
+                      <input matInput placeholder="Fourth answer" formControlName="content" required>
+                    </label>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let element; let i = dataIndex">
+
+            <button type="button" mat-button (click)="expandedElement = expandedElement === element ? null : element">
+              Edit
+              lesson
+            </button>
+            <button type="button" mat-button (click)="deleteQuizQuestion(element, i);">Delete quiz</button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="quizDisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let element; let i = dataIndex; columns: quizDisplayedColumns;"
+            class="example-element-row"
+            [class.example-expanded-row]="expandedElement === element">
+        </tr>
+        <tr mat-row *matRowDef="let i = dataIndex; columns: ['expandedDetail']" class="example-detail-row"></tr>
+      </table>
+    </div>
+    <br>
+    <br>
+    <div class="button-wrapper">
+      <button (click)="onSubmit()" [disabled]="submitted" class="center" mat-raised-button color="primary">Create course
+      </button>
+    </div>
+
+  </div>
+
+
+</form>

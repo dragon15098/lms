@@ -1,0 +1,81 @@
+<h1 style="padding: 0 0 0 20px">Create new course</h1>
+<form [formGroup]="createFormGroup">
+  <div class="container" style="padding: 0 0 0 10px">
+    <mat-form-field appearance="fill">
+      <mat-label>Course name</mat-label>
+      <label>
+        <input matInput placeholder="Course name" formControlName="title" required>
+      </label>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category">{{category.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Instructor</mat-label>
+      <mat-select formControlName="instructor">
+        <mat-option *ngFor="let instructor of instructors"
+                    [value]="instructor">{{instructor.firstName + " " + instructor.lastName}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="container" style="padding: 0 0 0 10px">
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <label>
+        <textarea matInput placeholder="Description" formControlName="description" required></textarea>
+      </label>
+    </mat-form-field>
+  </div>
+
+  <div class="container" style="padding: 0 0 0 10px">
+    <label style="padding: 0 0 0 20px">Section</label>
+    <button type="button" [disabled]="submitted" (click)="onClickAddNewSection()" class="center" mat-raised-button
+            color="primary">Add new
+    </button>
+  </div>
+  <br>
+  <div class="mat-elevation-z8" style="margin: 20px">
+    <table mat-table [dataSource]="dataSource" formArrayName="sections"
+           class="mat-elevation-z8">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> No.</th>
+        <td mat-cell *matCellDef="let i = index"> {{ i + 1 + "." }}</td>
+      </ng-container>
+
+      <!-- Column definitions -->
+      <ng-container matColumnDef="sectionTitle">
+        <th mat-header-cell *matHeaderCellDef>Section title</th>
+        <td mat-cell *matCellDef="let index = index" [formGroupName]="index">
+          <mat-form-field appearance="fill">
+            <mat-label>Title</mat-label>
+            <label>
+              <input matInput placeholder="Course name" formControlName="sectionTitle" required>
+            </label>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let row; let index = index">
+          <button type="button" (click)="onClickLesson(index)" mat-button>Edit lesson</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef=" let i = index; columns: displayedColumns;" [formGroupName]="i"></tr>
+    </table>
+  </div>
+  <br>
+  <div class="button-wrapper">
+    <button (click)="onSubmit()" [disabled]="submitted" class="center" mat-raised-button color="primary">Create course
+    </button>
+  </div>
+
+</form>

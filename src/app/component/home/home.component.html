@@ -1,0 +1,80 @@
+<h1 style="padding: 0 0 0 20px ">Search form</h1>
+
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+  <div class="container" style="padding: 0 0 0 10px">
+    <mat-form-field appearance="fill">
+      <mat-label>Course name</mat-label>
+      <input matInput placeholder="Course name" formControlName="courseName">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Instructor name</mat-label>
+      <input matInput placeholder="Instructor name" formControlName="instructor">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Course create date</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate formControlName="createFrom" placeholder="Start date">
+        <input matEndDate formControlName="createTo" placeholder="End date">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+      <mat-error *ngIf="f.createFrom.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+      <mat-error *ngIf="f.createTo.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let status of statues" [value]="status">{{status}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Number student</mat-label>
+      <input matInput placeholder="Instructor" formControlName="numberStudent">
+    </mat-form-field>
+  </div>
+  <div class="button-wrapper">
+    <button type="submit" [disabled]="submitted" class="center" mat-raised-button color="primary">Search</button>
+    <button [disabled]="submitted" (click)="onClickAddNewCourse()" class="center" mat-raised-button color="primary">
+      Create new
+    </button>
+  </div>
+</form>
+
+
+<div class="mat-elevation-z8" style="margin: 20px">
+  <table mat-table [dataSource]="dataSource">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> No.</th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Course title</th>
+      <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="weight">
+      <th mat-header-cell *matHeaderCellDef> Weight</th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="symbol">
+      <th mat-header-cell *matHeaderCellDef> Symbol</th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row (click)="onClickCourseDetail(row);" *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator (page)="onPage($event)" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
+

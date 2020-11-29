@@ -1,0 +1,14 @@
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  padding: 5px 5px 0 5px
+}
+
+.button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}

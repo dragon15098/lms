@@ -1,0 +1,10 @@
+<div>
+  <img class="images" src="/assets/images/alert.png" alt=""/>
+</div>
+<h1 class="mess" mat-dialog-title>Are you sure to create {{object}}</h1>
+<div mat-dialog-actions class="container">
+  <div class="center">
+    <button mat-button (click)="onNoClick()" mat-raised-button color="warn">Cancel</button>
+    <button mat-button [mat-dialog-close]="object" mat-raised-button color="primary" cdkFocusInitial>Ok</button>
+  </div>
+</div>

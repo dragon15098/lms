@@ -1,0 +1,24 @@
+.images {
+  margin-left: auto;
+  display: block;
+  margin-right: auto;
+}
+
+.mess {
+  padding: 8px 0 0 0;
+  text-align: center;
+}
+
+.container {
+  position: relative;
+  padding: 0 0 8px 0 !important;
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
