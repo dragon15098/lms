@@ -6,6 +6,10 @@ import {LessonQuestion} from '../../../../_model/lesson-question';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {LessonService} from '../../../../_service/lesson.service';
+import {DialogComponent} from '../../../base_component/dialog/dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Section} from '../../../../_model/section';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,10 +25,20 @@ import {LessonService} from '../../../../_service/lesson.service';
   ],
 })
 export class CreateLessonComponent implements OnInit {
+
+  constructor(private fb: FormBuilder,
+              private lessonService: LessonService,
+              private dialog: MatDialog,
+              private snackBar: MatSnackBar) {
+  }
+
   public Editor = ClassicEditor;
   lessonForm: FormGroup;
   @Input()
   lesson: Lesson;
+
+  @Input()
+  section: Section;
 
   @Input()
   lessonObservable: Observable<Lesson>;
@@ -35,45 +49,78 @@ export class CreateLessonComponent implements OnInit {
 
   expandedElement: LessonQuestion;
 
-  constructor(private fb: FormBuilder,
-              private lessonService: LessonService) {
+  private static setCorrectAnswer(questionForm: FormGroup, question: LessonQuestion): void {
+    const answerFormArray = questionForm.get('lessonAnswers') as FormArray;
+    answerFormArray.controls[question.correctQuestionPosition].get('active').patchValue(true);
   }
 
   ngOnInit(): void {
     this.resetFormControl();
   }
 
-  updateLesson(): void {
+  updateLessonValue(): void {
     this.resetFormControl();
     if (this.lesson !== undefined) {
-      this.lessonService.getDetail(this.lesson.id).subscribe(value => {
-        console.log(value);
-        this.lesson = value;
-        const questionFormArray = this.lessonForm.get('lessonQuestions') as FormArray;
-        value.lessonQuestions.forEach(question => questionFormArray.push(this.createNewLessonQuestionForm()));
+      this.lessonService.getDetail(this.lesson.id).subscribe(lessonResponse => {
+        console.log(lessonResponse);
+        this.lesson = lessonResponse;
+        lessonResponse.lessonQuestions.forEach(question => {
+          this.setAnswerForEachQuestion(question);
+        });
         this.lessonForm.patchValue(this.lesson);
         this.updateView();
-        console.log(this.lessonForm);
       });
     }
   }
 
-  onSubmit(): void {
-    console.log(this.lessonForm);
-    console.log(this.lessonForm.value);
+  private setAnswerForEachQuestion(question: LessonQuestion): void {
+    const questionFormArray = this.lessonForm.get('lessonQuestions') as FormArray;
+    const questionForm = this.createNewLessonQuestionForm();
+    questionFormArray.push(questionForm);
+    CreateLessonComponent.setCorrectAnswer(questionForm, question);
   }
 
-  onCheck(indexQuestion: number, answerIndex: number): void {
+  onSubmit(): void {
+    const lesson = this.lessonForm.value as Lesson;
+    lesson.section = this.section;
+    this.insertOrUpdateLesson(lesson);
+  }
+
+  private insertOrUpdateLesson(lesson: Lesson): void {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '500px',
+      data: 'lesson'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.lessonService.insertOrUpdate(lesson).subscribe(value => {
+          this.lesson = value;
+          this.openSnackBar('Success', 'Oke');
+        });
+      }
+    });
+  }
+
+  openSnackBar(message: string, action: string): void {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
+
+  onCheckCorrectAnswer(indexQuestion: number, answerIndex: number): void {
     console.log(indexQuestion + ' ' + answerIndex);
-    const questions = this.lessonForm.get('lessonQuestions') as FormArray;
-    const answers = questions.controls[indexQuestion].get('lessonAnswers') as FormArray;
+    const questionsFormArray = this.lessonForm.get('lessonQuestions') as FormArray;
+    const questionFromGroup = questionsFormArray.controls[indexQuestion];
+    const answersFormArray = questionFromGroup.get('lessonAnswers') as FormArray;
     for (let i = 0; i < 4; i++) {
+      const answerForm = answersFormArray.controls[i] as FormControl;
+      const activeForm = answerForm.get('active');
       if (i !== answerIndex) {
-        const answer = answers.controls[i] as FormControl;
-        answer.get('active').patchValue(false);
+        activeForm.patchValue(false);
       } else {
-        const answer = answers.controls[i] as FormControl;
-        answer.get('active').patchValue(true);
+        questionFromGroup.get('correctQuestionPosition').patchValue(i);
+        activeForm.patchValue(true);
       }
     }
     console.log(this.lessonForm.value);
@@ -95,38 +142,25 @@ export class CreateLessonComponent implements OnInit {
     console.log(this.lessonForm);
   }
 
-
   createNewLessonQuestionForm(): FormGroup {
     return this.fb.group({
       id: this.fb.control(''),
       questionTitle: this.fb.control(''),
       question: this.fb.control(''),
+      correctQuestionPosition: this.fb.control(''),
       lessonAnswers: this.fb.array([
-        this.fb.group({
-          id: this.fb.control(''),
-          explanation: this.fb.control(''),
-          content: this.fb.control(''),
-          active: this.fb.control('')
-        }),
-        this.fb.group({
-          id: this.fb.control(''),
-          explanation: this.fb.control(''),
-          content: this.fb.control(''),
-          active: this.fb.control('')
-        }),
-        this.fb.group({
-          id: this.fb.control(''),
-          explanation: this.fb.control(''),
-          content: this.fb.control(''),
-          active: this.fb.control('')
-        }),
-        this.fb.group({
-          id: this.fb.control(''),
-          explanation: this.fb.control(''),
-          content: this.fb.control(''),
-          active: this.fb.control('')
-        })
-      ])
+        this.createFormAnswer(),
+        this.createFormAnswer(),
+        this.createFormAnswer(),
+        this.createFormAnswer()])
+    });
+  }
+
+  private createFormAnswer(): FormGroup {
+    return this.fb.group({
+      id: this.fb.control(''),
+      content: this.fb.control(''),
+      active: this.fb.control('')
     });
   }
 

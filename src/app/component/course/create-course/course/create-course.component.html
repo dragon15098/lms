@@ -23,14 +23,8 @@
       </mat-select>
     </mat-form-field>
   </div>
-
   <div class="container" style="padding: 0 0 0 10px">
-    <mat-form-field appearance="fill">
-      <mat-label>Description</mat-label>
-      <label>
-        <textarea matInput placeholder="Description" formControlName="description" required></textarea>
-      </label>
-    </mat-form-field>
+    <ckeditor formControlName="description" [editor]="editor" data="<p>Hello, world!</p>"></ckeditor>
   </div>
 
   <div class="container" style="padding: 0 0 0 10px">
@@ -64,7 +58,7 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Action</th>
         <td mat-cell *matCellDef="let row; let index = index">
-          <button type="button" (click)="onClickLesson(index)" mat-button>Edit lesson</button>
+          <button type="button" (click)="onClickLesson(index)" mat-button>Edit section</button>
         </td>
       </ng-container>
 

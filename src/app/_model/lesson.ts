@@ -1,4 +1,5 @@
 import {LessonQuestion} from './lesson-question';
+import {Section} from './section';
 
 export interface Lesson {
   id: number;
@@ -6,4 +7,5 @@ export interface Lesson {
   urlVideo: string;
   description: string;
   lessonQuestions: LessonQuestion[];
+  section: Section;
 }

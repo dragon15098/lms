@@ -1,6 +1,6 @@
 <h1>Section detail</h1>
 <form [formGroup]="sectionForm">
-  <mat-form-field  style="padding: 0 0 0 10px" appearance="fill">
+  <mat-form-field style="padding: 0 0 0 10px" appearance="fill">
     <mat-label>Section title</mat-label>
     <label>
       <input matInput placeholder="Section title" formControlName="sectionTitle" required>
@@ -106,6 +106,7 @@
                       <input matInput placeholder="First answer" formControlName="content" required>
                     </label>
                   </mat-form-field>
+                  <mat-checkbox (change)="onCheckCorrectAnswer(i, 0)" formControlName="active">Active</mat-checkbox>
                 </div>
                 <div formGroupName="1">
                   <mat-form-field appearance="fill">
@@ -114,6 +115,7 @@
                       <input matInput placeholder="Second answer" formControlName="content" required>
                     </label>
                   </mat-form-field>
+                  <mat-checkbox (change)="onCheckCorrectAnswer(i, 1)" formControlName="active">Active</mat-checkbox>
                 </div>
                 <div formGroupName="2">
                   <mat-form-field appearance="fill">
@@ -122,6 +124,7 @@
                       <input matInput placeholder="Third answer" formControlName="content" required>
                     </label>
                   </mat-form-field>
+                  <mat-checkbox (change)="onCheckCorrectAnswer(i, 2)" formControlName="active">Active</mat-checkbox>
                 </div>
                 <div formGroupName="3">
                   <mat-form-field appearance="fill">
@@ -130,6 +133,7 @@
                       <input matInput placeholder="Fourth answer" formControlName="content" required>
                     </label>
                   </mat-form-field>
+                  <mat-checkbox (change)="onCheckCorrectAnswer(i, 3)" formControlName="active">Active</mat-checkbox>
                 </div>
               </div>
             </div>
@@ -141,8 +145,7 @@
           <td mat-cell *matCellDef="let element; let i = dataIndex">
 
             <button type="button" mat-button (click)="expandedElement = expandedElement === element ? null : element">
-              Edit
-              lesson
+              Edit lesson
             </button>
             <button type="button" mat-button (click)="deleteQuizQuestion(element, i);">Delete quiz</button>
           </td>

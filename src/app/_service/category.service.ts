@@ -13,7 +13,7 @@ export class CategoryService {
     return this.httpService.get<Category[]>(`${environment.apiUrl}/category/get_all`);
   }
 
-  // public find(): Observable<Category[]> {
-  //   return this.httpService.get<Category[]>(`${environment.apiUrl}/category/find`);
-  // }
+  public createOrUpdate(category: Category): Observable<Category[]> {
+    return this.httpService.post<Category[]>(`${environment.apiUrl}/category`, category);
+  }
 }

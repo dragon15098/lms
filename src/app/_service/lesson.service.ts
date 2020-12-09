@@ -14,4 +14,8 @@ export class LessonService {
   public getDetail(lessonId: number): Observable<Lesson> {
     return this.httpService.get<Lesson>(`${environment.apiUrl}/lesson/${lessonId}`);
   }
+
+  public insertOrUpdate(lesson: Lesson): Observable<Lesson> {
+    return this.httpService.post<Lesson>(`${environment.apiUrl}/lesson`, lesson);
+  }
 }

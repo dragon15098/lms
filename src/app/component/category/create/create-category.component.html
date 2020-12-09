@@ -1,0 +1,15 @@
+<h1>Create category</h1>
+
+<form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+  <div class="container" style="padding: 0 0 0 10px">
+    <mat-form-field appearance="fill">
+      <mat-label>Category name</mat-label>
+      <label>
+        <input matInput placeholder="Category name" formControlName="name">
+      </label>
+    </mat-form-field>
+  </div>
+  <div class="button-wrapper">
+    <button type="submit" [disabled]="submitted" class="center" mat-raised-button color="primary">Create</button>
+  </div>
+</form>

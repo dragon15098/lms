@@ -37,6 +37,9 @@ import {FileUploadComponent} from './component/base_component/file-upload/file-u
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {CreateCategoryComponent} from './component/category/create/create-category.component';
+import {CreateUserComponent} from './component/user/create-user/create-user.component';
+import {UserComponent} from './component/user/user.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +52,10 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     CreateSectionComponent,
     CreateLessonComponent,
     CategoryComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    CreateCategoryComponent,
+    CreateUserComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,

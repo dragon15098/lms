@@ -12,6 +12,7 @@ import {User} from '../../../../_model/user';
 import {UseService} from '../../../../_service/use.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SectionService} from '../../../../_service/section.service';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,17 +26,17 @@ export class CreateCourseComponent implements OnInit {
   createFormGroup: FormGroup;
   categories: Category[] = [];
   instructors: User[] = [];
-
+  editor = ClassicEditor;
   selectedCriteria: User;
 
   dataSource = new BehaviorSubject<AbstractControl[]>([]);
   @Input()
   courseObservable: Observable<Course>;
+  course: Course;
 
   @Output()
   nextTab: EventEmitter<any> = new EventEmitter();
 
-  course: Course;
 
   constructor(
     private fb: FormBuilder,
@@ -108,7 +109,8 @@ export class CreateCourseComponent implements OnInit {
   }
 
   public onClickLesson(index: number): void {
-    this.nextTab.emit(this.course.sections[index]);
+    const data = {section : this.course.sections[index], course : this.course};
+    this.nextTab.emit(data);
   }
 
   validCourse(course: Course): boolean {
@@ -121,14 +123,10 @@ export class CreateCourseComponent implements OnInit {
 
   public onSubmit(): void {
     const course: Course = this.createFormGroup.value;
-    if (course.id !== null) {
-      this.updateCourse(course);
-    } else {
-      this.createCourse(course);
-    }
+    this.insertOrUpdateCourse(course);
   }
 
-  private createCourse(course: Course): void {
+  private insertOrUpdateCourse(course: Course): void {
     if (this.validCourse(course)) {
       const dialogRef = this.dialog.open(DialogComponent, {
         width: '500px',
@@ -137,33 +135,14 @@ export class CreateCourseComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result !== undefined) {
-          this.createNewCourse(course);
+          this.callApiInsertOrUpdateCourse(course);
         }
       });
     }
   }
 
-
-  private updateCourse(course: Course): void {
-    if (this.validCourse(course)) {
-      const dialogRef = this.dialog.open(DialogComponent, {
-        width: '500px',
-        data: 'course'
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result !== undefined) {
-          this.courseService.updateCourse(course).subscribe(value => {
-            this.course = value;
-            this.openSnackBar('Success', 'Oke');
-          });
-        }
-      });
-    }
-  }
-
-  private createNewCourse(course: Course): void {
-    this.courseService.createCourse(course).subscribe(value => {
+  private callApiInsertOrUpdateCourse(course: Course): void {
+    this.courseService.insertOrUpdateCourse(course).subscribe(value => {
       this.course = value;
       this.openSnackBar('Success', 'Oke');
     });

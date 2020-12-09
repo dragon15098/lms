@@ -17,4 +17,8 @@ export class SectionService {
   public getDetail(sectionId: number): Observable<Section> {
     return this.httpService.get<Section>(`${environment.apiUrl}/section/${sectionId}`);
   }
+
+  public insertOrUpdate(section: Section): Observable<Section> {
+    return this.httpService.post<Section>(`${environment.apiUrl}/section`, section);
+  }
 }

@@ -13,11 +13,8 @@ export class CourseService {
     return this.httpService.get<Course[]>(`${environment.apiUrl}/course/test`);
   }
 
-  public createCourse(course: Course): Observable<Course> {
-    return this.httpService.post<Course>(`${environment.apiUrl}/course/create`, course);
-  }
-  public updateCourse(course: Course): Observable<Course> {
-    return this.httpService.post<Course>(`${environment.apiUrl}/course/update`, course);
+  public insertOrUpdateCourse(course: Course): Observable<Course> {
+    return this.httpService.post<Course>(`${environment.apiUrl}/course`, course);
   }
 
   public getCourseDetail(id: number): Observable<Course> {

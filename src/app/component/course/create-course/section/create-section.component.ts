@@ -1,10 +1,14 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Course} from '../../../../_model/course';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {AbstractControl, FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Section} from '../../../../_model/section';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {QuizQuestion} from '../../../../_model/quiz-question';
+import {SectionService} from '../../../../_service/section.service';
+import {DialogComponent} from '../../../base_component/dialog/dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,12 +33,16 @@ export class CreateSectionComponent implements OnInit {
 
   expandedElement: QuizQuestion | null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+              private dialog: MatDialog,
+              private snackBar: MatSnackBar,
+              private sectionService: SectionService) {
   }
 
   @Input()
-  course: Observable<Course>;
-
+  courseObservable: Observable<Course>;
+  @Input()
+  course: Course;
   @Input()
   section: Section;
 
@@ -62,19 +70,34 @@ export class CreateSectionComponent implements OnInit {
 
   updateSection(): void {
     this.resetFormControl();
+    console.log(this.section);
     if (this.section !== undefined) {
-
-      const lessons = this.sectionForm.get('lessons') as FormArray;
-      this.section.lessons.forEach(() => lessons.push(this.newLessonFormGroup()));
-      // lessons.patchValue(this.section.lessons);
-
-      const quizQuestions = this.getFormArrayQuiz();
-      this.section.quiz.quizQuestions.forEach(() => quizQuestions.push(this.createNewQuizQuestionForm()));
-
-      this.sectionForm.patchValue(this.section);
-      this.updateView();
-      this.updateQuizView();
+      this.sectionService.getDetail(this.section.id).subscribe(value => {
+        console.log(value);
+        this.section = value;
+        const lessons = this.sectionForm.get('lessons') as FormArray;
+        this.section.lessons.forEach(() => lessons.push(this.newLessonFormGroup()));
+        const quizQuestions = this.getQuestionFormArray();
+        if (this.section.quiz.quizQuestions != null) {
+          this.section.quiz.quizQuestions.forEach(question => {
+            const quizQuestionForm = this.createNewQuizQuestionForm();
+            quizQuestions.push(quizQuestionForm);
+            this.checkCorrectAnswer(quizQuestionForm, question);
+          });
+        } else {
+          this.section.quiz.quizQuestions = [];
+        }
+        this.sectionForm.patchValue(this.section);
+        this.updateView();
+        this.updateQuizView();
+      });
     }
+  }
+
+  checkCorrectAnswer(quizQuestionForm: FormGroup, question: QuizQuestion): void {
+    const quizAnswerFormArray = quizQuestionForm.get('quizAnswers') as FormArray;
+    const correctAnswerFormControl = quizAnswerFormArray.controls[question.correctAnswerPosition].get('active');
+    correctAnswerFormControl.patchValue(true);
   }
 
   deleteQuizQuestion(element: any, index: number): void {
@@ -84,7 +107,7 @@ export class CreateSectionComponent implements OnInit {
     } else {
       console.log('delete in html');
     }
-    this.getFormArrayQuiz().removeAt(index);
+    this.getQuestionFormArray().removeAt(index);
     this.updateQuizView();
   }
 
@@ -95,16 +118,50 @@ export class CreateSectionComponent implements OnInit {
 
   onSubmit(): void {
     console.log(this.sectionForm.value);
+    const section = this.sectionForm.value;
+    section.course = this.course;
+    this.insertOrUpdateLesson(section);
   }
 
-  onCheck(): void {
-    console.log(this.sectionForm.value);
+  private insertOrUpdateLesson(section: Section): void {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '500px',
+      data: 'section'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.sectionService.insertOrUpdate(section).subscribe(value => {
+          console.log(value);
+          this.sectionForm.patchValue(value);
+          this.section = value;
+        });
+      }
+    });
   }
 
   onClickAddNewLesson(): void {
     const lessonsFormArray = this.sectionForm.get('lessons') as FormArray;
     lessonsFormArray.push(this.newLessonFormGroup());
     this.updateView();
+  }
+
+  onCheckCorrectAnswer(questionIndex: number, answerIndex: number): void {
+    console.log(questionIndex + ' ' + answerIndex);
+    const questionFormArray = this.getQuestionFormArray();
+    const currentQuestionForm = questionFormArray.controls[questionIndex];
+    const answersFormArray = this.getFormArrayAnswer(questionIndex);
+    for (let i = 0; i < 4; i++) {
+      const answerForm = answersFormArray.controls[i] as FormControl;
+      const activeForm = answerForm.get('active');
+      if (i !== answerIndex) {
+        activeForm.patchValue(false);
+      } else {
+        currentQuestionForm.get('correctQuestionPosition').patchValue(i);
+        activeForm.patchValue(true);
+      }
+    }
+    console.log(this.sectionForm.value);
   }
 
   public newLessonFormGroup(): FormGroup {
@@ -119,29 +176,26 @@ export class CreateSectionComponent implements OnInit {
       id: this.fb.control(''),
       questionTitle: this.fb.control(''),
       question: this.fb.control(''),
+      correctQuestionPosition: this.fb.control(''),
       quizAnswers: this.fb.array([
-        this.fb.group({
-          id: this.fb.control(''),
-          content: this.fb.control(''),
-        }),
-        this.fb.group({
-          id: this.fb.control(''),
-          content: this.fb.control(''),
-        }),
-        this.fb.group({
-          id: this.fb.control(''),
-          content: this.fb.control(''),
-        }),
-        this.fb.group({
-          id: this.fb.control(''),
-          content: this.fb.control(''),
-        }),
+        this.createNewAnswerForm(),
+        this.createNewAnswerForm(),
+        this.createNewAnswerForm(),
+        this.createNewAnswerForm()
       ])
     });
   }
 
+  createNewAnswerForm(): FormGroup {
+    return this.fb.group({
+      id: this.fb.control(''),
+      content: this.fb.control(''),
+      active: this.fb.control('')
+    });
+  }
+
   onClickAddNewQuestion(): void {
-    const control = this.getFormArrayQuiz();
+    const control = this.getQuestionFormArray();
     control.push(this.createNewQuizQuestionForm());
     this.updateQuizView();
   }
@@ -151,11 +205,16 @@ export class CreateSectionComponent implements OnInit {
   }
 
   updateQuizView(): void {
-    this.quizSource.next((this.getFormArrayQuiz()).controls);
+    this.quizSource.next((this.getQuestionFormArray()).controls);
   }
 
-  getFormArrayQuiz(): FormArray {
+  getQuestionFormArray(): FormArray {
     return this.sectionForm.get('quiz').get('quizQuestions') as FormArray;
+  }
+
+  getFormArrayAnswer(questionIndex: number): FormArray {
+    const questionFormArray = this.getQuestionFormArray();
+    return questionFormArray.controls[questionIndex].get('quizAnswers') as FormArray;
   }
 
 }

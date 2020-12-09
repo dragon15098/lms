@@ -3,10 +3,11 @@
     <app-create-course [courseObservable]="courseObservable" (nextTab)="changeTabSection($event)"></app-create-course>
   </mat-tab>
   <mat-tab [disabled]="disable" label="Lesson And Quiz">
-    <app-create-section [section]="section" [course]="courseObservable"
+    <app-create-section
+      [course] ="course" [section]="section" [courseObservable]="courseObservable"
                         (nextTab)="changeTabLesson($event)"></app-create-section>
   </mat-tab>
   <mat-tab [disabled]="true" label="Lesson Quiz">
-    <app-create-lesson [lesson]="lesson"></app-create-lesson>
+    <app-create-lesson [section]="section" [lesson]="lesson"></app-create-lesson>
   </mat-tab>
 </mat-tab-group>

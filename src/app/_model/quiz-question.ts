@@ -5,4 +5,5 @@ export interface QuizQuestion {
   question: string;
   correctAnswer: QuizAnswer;
   quizAnswers: QuizAnswer[];
+  correctAnswerPosition: number;
 }

@@ -1,5 +1,5 @@
 <h1>Lesson detail</h1>
-<form [formGroup]="lessonForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="lessonForm" >
   <mat-form-field style="padding: 0 0 0 10px" appearance="fill">
     <mat-label>Lesson title</mat-label>
     <label>
@@ -9,10 +9,11 @@
 
   <ckeditor formControlName="description" [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor>
   <div class="button-wrapper">
-    <button (click)="onSubmit()" [disabled]="submitted" class="center" mat-raised-button color="primary">
+    <button type="button" (click)="onSubmit()" [disabled]="submitted" class="center" mat-raised-button color="primary">
       Edit lesson
     </button>
-    <button (click)="createNewQuestion()" [disabled]="submitted" class="center" mat-raised-button color="primary">
+    <button type="button" (click)="createNewQuestion()" [disabled]="submitted" class="center" mat-raised-button
+            color="primary">
       Create new question
     </button>
   </div>
@@ -62,7 +63,7 @@
                     <input matInput placeholder="First answer" formControlName="content" required>
                   </label>
                 </mat-form-field>
-                <mat-checkbox (change)="onCheck(i, 0)" formControlName="active">Active</mat-checkbox>
+                <mat-checkbox (change)="onCheckCorrectAnswer(i, 0)" formControlName="active">Active</mat-checkbox>
               </div>
 
               <div formGroupName="1">
@@ -72,7 +73,7 @@
                     <input matInput placeholder="Second answer" formControlName="content" required>
                   </label>
                 </mat-form-field>
-                <mat-checkbox (change)="onCheck(i, 1)" formControlName="active">Active</mat-checkbox>
+                <mat-checkbox (change)="onCheckCorrectAnswer(i, 1)" formControlName="active">Active</mat-checkbox>
               </div>
               <div formGroupName="2">
                 <mat-form-field appearance="fill">
@@ -81,7 +82,7 @@
                     <input matInput placeholder="Third answer" formControlName="content" required>
                   </label>
                 </mat-form-field>
-                <mat-checkbox (change)="onCheck(i, 2)" formControlName="active">Active</mat-checkbox>
+                <mat-checkbox (change)="onCheckCorrectAnswer(i, 2)" formControlName="active">Active</mat-checkbox>
               </div>
               <div formGroupName="3">
                 <mat-form-field appearance="fill">
@@ -90,7 +91,7 @@
                     <input matInput placeholder="Fourth answer" formControlName="content" required>
                   </label>
                 </mat-form-field>
-                <mat-checkbox (change)="onCheck(i, 3)" formControlName="active">Active</mat-checkbox>
+                <mat-checkbox (change)="onCheckCorrectAnswer(i, 3)" formControlName="active">Active</mat-checkbox>
               </div>
             </div>
           </div>

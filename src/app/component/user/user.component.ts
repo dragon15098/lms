@@ -1,48 +1,48 @@
 import {Component, OnInit} from '@angular/core';
-import {Category} from '../../_model/category';
 import {PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl, FormGroup} from '@angular/forms';
-import {CategoryService} from '../../_service/category.service';
 import {Router} from '@angular/router';
+import {UseService} from '../../_service/use.service';
+import {User} from '../../_model/user';
 
 @Component({
-  selector: 'app-category',
-  templateUrl: 'category.component.html',
-  styleUrls: ['category.component.css']
+  selector: 'app-user',
+  templateUrl: 'user.component.html',
+  styleUrls: ['user.component.css']
 })
-export class CategoryComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'name', 'actions'];
+export class UserComponent implements OnInit {
+  displayedColumns: string[] = ['position', 'firstName', 'lastName', 'email', 'phoneNumber'];
   searchForm: FormGroup;
-  dataSource = new MatTableDataSource<Category>();
+  dataSource = new MatTableDataSource<User>();
   submitted = false;
 
-  constructor(private categoryService: CategoryService,
+  constructor(private userService: UseService,
               private router: Router) {
   }
 
   ngOnInit(): void {
     this.searchForm = new FormGroup({
-      categoryName: new FormControl('')
+      name: new FormControl('')
     });
     this.onSubmit();
   }
 
   onSubmit(): void {
     this.submitted = true;
-    this.categoryService.getAll().subscribe(value => {
+    this.userService.getAllUser().subscribe(value => {
       this.dataSource.data = value;
       this.submitted = false;
       console.log(value);
     });
   }
 
-  onClickCategoryDetail(row: Category): void {
-    console.log(row);
+  onClickUserDetail(row: User): void {
+    this.router.navigate([`user/${row.id}`]).then();
   }
 
-  createNewCategory(): void {
-    this.router.navigate(['/create-category']).then();
+  createNewUser(): void {
+    this.router.navigate(['/create-user']).then();
   }
 
 
