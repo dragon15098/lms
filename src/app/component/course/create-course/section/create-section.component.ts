@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Course} from '../../../../_model/course';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
@@ -36,7 +36,8 @@ export class CreateSectionComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
               private snackBar: MatSnackBar,
-              private sectionService: SectionService) {
+              private sectionService: SectionService,
+              private cdf: ChangeDetectorRef) {
   }
 
   @Input()
@@ -70,10 +71,8 @@ export class CreateSectionComponent implements OnInit {
 
   updateSection(): void {
     this.resetFormControl();
-    console.log(this.section);
     if (this.section !== undefined) {
       this.sectionService.getDetail(this.section.id).subscribe(value => {
-        console.log(value);
         this.section = value;
         const lessons = this.sectionForm.get('lessons') as FormArray;
         this.section.lessons.forEach(() => lessons.push(this.newLessonFormGroup()));
@@ -90,8 +89,10 @@ export class CreateSectionComponent implements OnInit {
         this.sectionForm.patchValue(this.section);
         this.updateView();
         this.updateQuizView();
+        this.cdf.detectChanges();
       });
     }
+
   }
 
   checkCorrectAnswer(quizQuestionForm: FormGroup, question: QuizQuestion): void {
@@ -135,8 +136,15 @@ export class CreateSectionComponent implements OnInit {
           console.log(value);
           this.sectionForm.patchValue(value);
           this.section = value;
+          this.openSnackBar('Success', 'Oke');
         });
       }
+    });
+  }
+
+  openSnackBar(message: string, action: string): void {
+    this.snackBar.open(message, action, {
+      duration: 2000,
     });
   }
 

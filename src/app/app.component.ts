@@ -25,8 +25,8 @@ export class AppComponent implements OnDestroy {
   }
 
   mobileQuery: MediaQueryList;
-  fillerNav: Array<string> = ['Course', 'Categories', 'User', 'Home', 'CDE'];
-  routeNav: Array<string> = ['course', 'categories', 'user', 'home', 'CDE'];
+  fillerNav: Array<string> = ['Course', 'Categories', 'User', 'Home'];
+  routeNav: Array<string> = ['course', 'categories', 'user', 'home'];
   private readonly mobileQueryListener: () => void;
 
   ngOnDestroy(): void {

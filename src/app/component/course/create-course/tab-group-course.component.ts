@@ -3,7 +3,7 @@ import {Course} from '../../../_model/course';
 import {Section} from '../../../_model/section';
 import {ActivatedRoute} from '@angular/router';
 import {CourseService} from '../../../_service/course.service';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {MatTabChangeEvent} from '@angular/material/tabs';
 import {CreateSectionComponent} from './section/create-section.component';
 import {CreateLessonComponent} from './lesson/create-lesson.component';
@@ -58,7 +58,8 @@ export class TabGroupCourseComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
-    if (this.id !== undefined) {
+    console.log(this.id);
+    if (this.id !== undefined && this.id !== 0) {
       this.courseObservable = this.courseService.getCourseDetail(this.id);
     }
   }

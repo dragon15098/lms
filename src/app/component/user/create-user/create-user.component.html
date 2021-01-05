@@ -1,7 +1,7 @@
-<h1> User detail</h1>
+<h1 style="padding: 0 0 0 20px "> User detail</h1>
 
 <form [formGroup]="userForm">
-  <div class="container" style="padding: 0 0 0 10px">
+  <div class="container" >
     <mat-form-field appearance="fill">
       <mat-label>Username</mat-label>
       <label>
@@ -21,7 +21,7 @@
       </label>
     </mat-form-field>
   </div>
-  <div class="container" style="padding: 0 0 0 10px">
+  <div class="container" >
     <mat-form-field appearance="fill">
       <mat-label>First name</mat-label>
       <label>
@@ -42,7 +42,7 @@
       </label>
     </mat-form-field>
   </div>
-  <div class="container" style="padding: 0 0 0 10px">
+  <div class="container" >
     <mat-form-field appearance="fill">
       <mat-label>Phone number</mat-label>
       <label>
@@ -58,12 +58,12 @@
   </div>
 
   <br>
-  <h1>Intruder detail</h1>
+  <h1 style="padding: 0 0 0 20px ">Intruder detail</h1>
   <!--  <mat-checkbox (change)="checkIntruder($event)" >Teacher detail</mat-checkbox>-->
   <div formGroupName="instructorDetail">
     <!--    <h1 [@detailExpand]="isIntruder ? 'expanded' : 'collapsed'">AAAAAA</h1>-->
     <ckeditor formControlName="aboutMe" [editor]="editor" data="<p>Description</p>"></ckeditor>
-    <div class="container" style="padding: 0 0 0 10px">
+    <div class="container">
       <mat-form-field appearance="fill">
         <mat-label>Facebook</mat-label>
         <label>
@@ -92,8 +92,8 @@
     </div>
   </div>
 
-  <h1>Student detail</h1>
-  <div formGroupName="studentDetail">
+  <h1 style="padding: 0 0 0 20px ">Student detail</h1>
+  <div class="container" formGroupName="studentDetail">
     <mat-form-field appearance="fill">
       <mat-label>Grade</mat-label>
       <mat-select formControlName="grade">

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Lesson} from '../../../../_model/lesson';
 import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -29,7 +29,8 @@ export class CreateLessonComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private lessonService: LessonService,
               private dialog: MatDialog,
-              private snackBar: MatSnackBar) {
+              private snackBar: MatSnackBar,
+              private cdf: ChangeDetectorRef) {
   }
 
   public Editor = ClassicEditor;
@@ -69,6 +70,7 @@ export class CreateLessonComponent implements OnInit {
         });
         this.lessonForm.patchValue(this.lesson);
         this.updateView();
+        this.cdf.detectChanges();
       });
     }
   }
@@ -94,8 +96,10 @@ export class CreateLessonComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
+        console.log(lesson);
         this.lessonService.insertOrUpdate(lesson).subscribe(value => {
           this.lesson = value;
+          this.lessonForm.patchValue(value);
           this.openSnackBar('Success', 'Oke');
         });
       }
@@ -128,6 +132,7 @@ export class CreateLessonComponent implements OnInit {
 
   resetFormControl(): void {
     this.lessonForm = this.fb.group({
+      id: this.fb.control(''),
       lessonTitle: this.fb.control(''),
       description: this.fb.control(''),
       urlVideo: this.fb.control(''),
@@ -165,12 +170,23 @@ export class CreateLessonComponent implements OnInit {
   }
 
   deleteQuizQuestion(element: any, index: number): void {
-
+    const quizQuestion = element.value;
+    if (quizQuestion.id !== '') {
+      console.log('delete in server');
+    } else {
+      console.log('delete in html');
+    }
+    this.getQuestionFormArray().removeAt(index);
+    this.updateView();
   }
 
   onFileComplete(data: string): void {
     console.log(data);
     this.lessonForm.get('urlVideo').setValue(data);
+  }
+
+  getQuestionFormArray(): FormArray {
+    return this.lessonForm.get('lessonQuestions') as FormArray;
   }
 
   updateView(): void {

@@ -8,4 +8,9 @@ export interface Course {
   category: Category;
   instructor: User;
   sections: Section[];
+  status: CourseStatus;
+}
+
+export enum CourseStatus {
+  WAIT= 'WAIT', APPROVED = 'APPROVED'
 }

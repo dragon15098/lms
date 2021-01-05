@@ -74,6 +74,8 @@ export class CreateCourseComponent implements OnInit {
       this.courseObservable.subscribe(value => {
         value.sections = [];
         this.createFormGroup.patchValue(value);
+        console.log(this.createFormGroup);
+        console.log(value);
         this.selectedCriteria = value.instructor;
         this.course = value;
         if (value.id != null) {
@@ -109,7 +111,7 @@ export class CreateCourseComponent implements OnInit {
   }
 
   public onClickLesson(index: number): void {
-    const data = {section : this.course.sections[index], course : this.course};
+    const data = {section: this.course.sections[index], course: this.course};
     this.nextTab.emit(data);
   }
 

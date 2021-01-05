@@ -3,8 +3,12 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {FormControl, FormGroup} from '@angular/forms';
 import {CourseService} from '../../_service/course.service';
-import {Course} from '../../_model/course';
+import {Course, CourseStatus} from '../../_model/course';
 import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {CategoryService} from '../../_service/category.service';
+import {Category} from '../../_model/category';
+import {from, Observable} from 'rxjs';
 
 
 @Component({
@@ -13,16 +17,22 @@ import {Router} from '@angular/router';
   styleUrls: ['home.component.css']
 })
 export class HomeComponent implements AfterViewInit, OnInit {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  displayedColumns: string[] = ['position', 'title', 'instructor', 'commentCount', 'courseSell', 'status', 'actions'];
   dataSource = new MatTableDataSource<Course>();
   searchForm: FormGroup;
   submitted = false;
   pageSize = 5;
   statues: string[] = [
-    'Waiting', 'Approved'
+    'WAIT', 'APPROVED'
   ];
+  categoryFormControl = new FormControl();
 
-  constructor(private courseService: CourseService, private router: Router) {
+  categories: Category[] = [];
+
+  constructor(private courseService: CourseService,
+              private snackBar: MatSnackBar,
+              private categoryService: CategoryService,
+              private router: Router) {
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -35,16 +45,27 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
+    const fromDate = new Date();
+    fromDate.setMonth(fromDate.getMonth() - 3);
     this.searchForm = new FormGroup({
       courseName: new FormControl(''),
       instructor: new FormControl(''),
-      createFrom: new FormControl(''),
-      createTo: new FormControl(''),
+      createFrom: new FormControl(fromDate),
+      createTo: new FormControl(new Date()),
       status: new FormControl(''),
-      numberStudent: new FormControl(''),
+      categoryId: this.categoryFormControl
     });
+    this.getAllCategory();
     this.onSubmit();
   }
+
+  public getAllCategory(): void {
+    this.categoryService.getAll().subscribe(value => {
+      this.categories = value;
+    });
+
+  }
+
 
   get f(): any {
     return this.searchForm.controls;
@@ -61,10 +82,49 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
 
   onSubmit(): void {
-    this.submitted = true;
-    this.courseService.searchCourse().subscribe(value => {
-      this.dataSource.data = value;
-      this.submitted = false;
+    const searchValue = this.searchForm.value;
+    console.log(searchValue);
+    const courseObservable = this.courseService.searchCourse(
+      this.categoryFormControl.value,
+      searchValue.courseName,
+      this.convert(searchValue.createFrom),
+      this.convert(searchValue.createTo),
+      searchValue.instructor,
+      searchValue.status);
+    if (courseObservable != null) {
+      this.submitted = true;
+      courseObservable.subscribe(value => {
+        this.submitted = false;
+        console.log(value);
+        this.dataSource.data = value.data;
+        console.log(this.dataSource.data);
+      }, () => {
+        console.log('this');
+        this.submitted = false;
+      });
+    }
+  }
+
+  convert(str): string {
+    const date = new Date(str);
+    const mnth = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return [date.getFullYear(), mnth, day].join('-');
+  }
+
+  onClickApprove(i: number): void {
+    this.courseService.approve(this.dataSource.data[i]).subscribe(value => {
+      if (value.status === CourseStatus.APPROVED) {
+        this.openSnackBar('Success', 'Oke');
+        this.onSubmit();
+      }
     });
   }
+
+  openSnackBar(message: string, action: string): void {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
+
 }

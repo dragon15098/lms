@@ -31,9 +31,18 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Number student</mat-label>
-      <input matInput placeholder="Instructor" formControlName="numberStudent">
+      <mat-label>Category</mat-label>
+      <mat-select [formControl]="categoryFormControl" multiple>
+        <mat-select-trigger>
+          {{categoryFormControl.value ? categoryFormControl.value[0].name : ''}}
+          <span *ngIf="categoryFormControl.value?.length > 1" class="example-additional-selection">
+        (+{{categoryFormControl.value.length - 1}} {{categoryFormControl.value?.length === 2 ? 'other' : 'others'}})
+      </span>
+        </mat-select-trigger>
+        <mat-option *ngFor="let category of categories" [value]="category">{{category.name}}</mat-option>
+      </mat-select>
     </mat-form-field>
+
   </div>
   <div class="button-wrapper">
     <button type="submit" [disabled]="submitted" class="center" mat-raised-button color="primary">Search</button>
@@ -54,25 +63,49 @@
     </ng-container>
 
     <!-- Name Column -->
-    <ng-container matColumnDef="name">
+    <ng-container matColumnDef="title">
       <th mat-header-cell *matHeaderCellDef> Course title</th>
       <td mat-cell *matCellDef="let element"> {{element.title}} </td>
     </ng-container>
 
-    <!-- Weight Column -->
-    <ng-container matColumnDef="weight">
-      <th mat-header-cell *matHeaderCellDef> Weight</th>
-      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    <!-- Instructor -->
+    <ng-container matColumnDef="instructor">
+      <th mat-header-cell *matHeaderCellDef> Instructor</th>
+      <td mat-cell *matCellDef="let element"> {{element.instructor.firstName + ' ' + element.instructor.lastName}} </td>
     </ng-container>
 
-    <!-- Symbol Column -->
-    <ng-container matColumnDef="symbol">
-      <th mat-header-cell *matHeaderCellDef> Symbol</th>
-      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    <!-- Number comment -->
+    <ng-container matColumnDef="commentCount">
+      <th mat-header-cell *matHeaderCellDef> NumberComment</th>
+      <td mat-cell *matCellDef="let element"> {{element.commentCount}} </td>
     </ng-container>
+
+    <!-- Total sell -->
+    <ng-container matColumnDef="courseSell">
+      <th mat-header-cell *matHeaderCellDef>Total sell</th>
+      <td mat-cell *matCellDef="let element"> {{element.courseSell}} </td>
+    </ng-container>
+
+    <!-- Total sell -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Action</th>
+      <td mat-cell *matCellDef="let element; let row; let i = index">
+        <button type="button" (click)="onClickCourseDetail(row)" mat-button>Edit lesson</button>
+
+        <button *ngIf="element.status === 'WAIT'" type="button" (click)="onClickApprove(i)" mat-button>Approve lesson
+        </button>
+      </td>
+
+    </ng-container>
+
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row (click)="onClickCourseDetail(row);" *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
   <mat-paginator (page)="onPage($event)" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

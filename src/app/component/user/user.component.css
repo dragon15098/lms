@@ -12,3 +12,7 @@ table {
   justify-content: center;
   width: 100%;
 }
+
+.center {
+  margin: 5px;
+}

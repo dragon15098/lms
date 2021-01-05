@@ -9,7 +9,7 @@
 
   <ckeditor formControlName="description" [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor>
   <div class="button-wrapper">
-    <button type="button" (click)="onSubmit()" [disabled]="submitted" class="center" mat-raised-button color="primary">
+    <button type="button" (click)="onSubmit()" [disabled]="submitted" class="center"  mat-raised-button color="primary">
       Edit lesson
     </button>
     <button type="button" (click)="createNewQuestion()" [disabled]="submitted" class="center" mat-raised-button
@@ -21,7 +21,14 @@
   <div style="text-align:center">
     <app-material-file-upload (onComplete)="onFileComplete($event)"></app-material-file-upload>
   </div>
-
+  <div class="button-wrapper">
+    <mat-form-field appearance="legacy">
+      <mat-label>Video</mat-label>
+      <label>
+        <input formControlName="urlVideo" disabled matInput placeholder="Video" required>
+      </label>
+    </mat-form-field>
+  </div>
   <div class="mat-elevation-z8" style="margin: 20px">
     <table mat-table [dataSource]="dataSource" multiTemplateDataRows formArrayName="lessonQuestions"
            class="mat-elevation-z8">
