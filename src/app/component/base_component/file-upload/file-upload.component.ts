@@ -21,7 +21,6 @@ export class FileUploadComponent {
   @Input() text = 'Upload';
   @Input() param = 'file';
   @Input() target = 'http://localhost:8080/api/resource/upload';
-  @Input() accept = 'mp4/*';
 
   @Output() onComplete = new EventEmitter<string>();
 

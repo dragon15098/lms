@@ -12,7 +12,7 @@ import {Router} from '@angular/router';
   styleUrls: ['category.component.css']
 })
 export class CategoryComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'name', 'actions'];
+  displayedColumns: string[] = ['position', 'name'];
   searchForm: FormGroup;
   dataSource = new MatTableDataSource<Category>();
   submitted = false;

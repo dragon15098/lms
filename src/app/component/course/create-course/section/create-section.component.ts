@@ -9,6 +9,7 @@ import {SectionService} from '../../../../_service/section.service';
 import {DialogComponent} from '../../../base_component/dialog/dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {QuizQuestionService} from '../../../../_service/quiz-question.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,7 +38,8 @@ export class CreateSectionComponent implements OnInit {
               private dialog: MatDialog,
               private snackBar: MatSnackBar,
               private sectionService: SectionService,
-              private cdf: ChangeDetectorRef) {
+              private cdf: ChangeDetectorRef,
+              private quizQuestionService: QuizQuestionService) {
   }
 
   @Input()
@@ -104,12 +106,15 @@ export class CreateSectionComponent implements OnInit {
   deleteQuizQuestion(element: any, index: number): void {
     const quizQuestion = element.value;
     if (quizQuestion.id !== '') {
-      console.log('delete in server');
+      this.quizQuestionService.deleteQuizQuestion(quizQuestion.id).subscribe(value => {
+        this.getQuestionFormArray().removeAt(index);
+        this.updateQuizView();
+      });
     } else {
-      console.log('delete in html');
+      this.getQuestionFormArray().removeAt(index);
+      this.updateQuizView();
     }
-    this.getQuestionFormArray().removeAt(index);
-    this.updateQuizView();
+
   }
 
   onClickEditLesson(index: number): void {

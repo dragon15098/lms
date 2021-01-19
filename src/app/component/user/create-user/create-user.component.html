@@ -11,13 +11,13 @@
     <mat-form-field appearance="fill">
       <mat-label>Password</mat-label>
       <label>
-        <input matInput placeholder="Password" formControlName="password">
+        <input matInput type="password" placeholder="Password" formControlName="password">
       </label>
     </mat-form-field>
     <mat-form-field appearance="fill">
       <mat-label>Confirm password</mat-label>
       <label>
-        <input matInput placeholder="Confirm password" formControlName="confirmPassword">
+        <input matInput type="password" placeholder="Confirm password" formControlName="confirmPassword">
       </label>
     </mat-form-field>
   </div>
@@ -60,8 +60,18 @@
   <br>
   <h1 style="padding: 0 0 0 20px ">Intruder detail</h1>
   <!--  <mat-checkbox (change)="checkIntruder($event)" >Teacher detail</mat-checkbox>-->
+  <div class="button-wrapper">
+    <mat-form-field appearance="legacy">
+      <mat-label>Avatar</mat-label>
+      <label>
+        <input formControlName="imageUrl" disabled matInput placeholder="Avatar" required>
+      </label>
+    </mat-form-field>
+  </div>
+  <div style="text-align:center">
+    <app-material-file-upload (onComplete)="onFileComplete($event)"></app-material-file-upload>
+  </div>
   <div formGroupName="instructorDetail">
-    <!--    <h1 [@detailExpand]="isIntruder ? 'expanded' : 'collapsed'">AAAAAA</h1>-->
     <ckeditor formControlName="aboutMe" [editor]="editor" data="<p>Description</p>"></ckeditor>
     <div class="container">
       <mat-form-field appearance="fill">

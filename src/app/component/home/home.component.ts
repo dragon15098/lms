@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {FormControl, FormGroup} from '@angular/forms';
 import {CourseService} from '../../_service/course.service';
 import {Course, CourseStatus} from '../../_model/course';
@@ -8,7 +8,8 @@ import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {CategoryService} from '../../_service/category.service';
 import {Category} from '../../_model/category';
-import {from, Observable} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {DialogApproveComponent} from './dialog-approve/dialog-approve.component';
 
 
 @Component({
@@ -17,11 +18,10 @@ import {from, Observable} from 'rxjs';
   styleUrls: ['home.component.css']
 })
 export class HomeComponent implements AfterViewInit, OnInit {
-  displayedColumns: string[] = ['position', 'title', 'instructor', 'commentCount', 'courseSell', 'status', 'actions'];
+  displayedColumns: string[] = ['position', 'title', 'instructor', 'commentCount', 'price', 'courseSell', 'status', 'actions'];
   dataSource = new MatTableDataSource<Course>();
   searchForm: FormGroup;
   submitted = false;
-  pageSize = 5;
   statues: string[] = [
     'WAIT', 'APPROVED'
   ];
@@ -32,16 +32,14 @@ export class HomeComponent implements AfterViewInit, OnInit {
   constructor(private courseService: CourseService,
               private snackBar: MatSnackBar,
               private categoryService: CategoryService,
-              private router: Router) {
+              private router: Router,
+              private dialog: MatDialog) {
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
-  }
-
-  public onPage(event: PageEvent): void {
   }
 
   ngOnInit(): void {
@@ -83,7 +81,6 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
   onSubmit(): void {
     const searchValue = this.searchForm.value;
-    console.log(searchValue);
     const courseObservable = this.courseService.searchCourse(
       this.categoryFormControl.value,
       searchValue.courseName,
@@ -95,11 +92,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
       this.submitted = true;
       courseObservable.subscribe(value => {
         this.submitted = false;
-        console.log(value);
         this.dataSource.data = value.data;
-        console.log(this.dataSource.data);
       }, () => {
-        console.log('this');
         this.submitted = false;
       });
     }
@@ -113,13 +107,30 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
 
   onClickApprove(i: number): void {
-    this.courseService.approve(this.dataSource.data[i]).subscribe(value => {
+    const course = this.dataSource.data[i] as Course;
+    const dialogRef = this.dialog.open(DialogApproveComponent, {
+      width: '250px'
+    });
+
+    dialogRef.afterClosed().subscribe(price => {
+      if (price !== undefined) {
+        course.price = price;
+        console.log(price);
+        console.log(course);
+        this.approveCourse(course);
+      }
+    });
+  }
+
+  approveCourse(course: Course): void {
+    this.courseService.approve(course).subscribe(value => {
       if (value.status === CourseStatus.APPROVED) {
         this.openSnackBar('Success', 'Oke');
         this.onSubmit();
       }
     });
   }
+
 
   openSnackBar(message: string, action: string): void {
     this.snackBar.open(message, action, {

@@ -9,6 +9,7 @@ export interface Course {
   instructor: User;
   sections: Section[];
   status: CourseStatus;
+  price: number;
 }
 
 export enum CourseStatus {

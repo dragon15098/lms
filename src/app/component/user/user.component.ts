@@ -12,7 +12,7 @@ import {User} from '../../_model/user';
   styleUrls: ['user.component.css']
 })
 export class UserComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'firstName', 'lastName', 'email', 'phoneNumber'];
+  displayedColumns: string[] = ['position', 'firstName', 'lastName', 'email', 'phoneNumber', 'role'];
   searchForm: FormGroup;
   dataSource = new MatTableDataSource<User>();
   submitted = false;

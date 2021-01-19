@@ -56,6 +56,7 @@ export class CreateCourseComponent implements OnInit {
       category: this.fb.control(''),
       instructor: this.fb.control(''),
       description: this.fb.control(''),
+      imageDescriptionLink: this.fb.control(''),
       sections: this.fb.array([])
     });
 
@@ -152,5 +153,9 @@ export class CreateCourseComponent implements OnInit {
 
   updateView(): void {
     this.dataSource.next((this.createFormGroup.get('sections') as FormArray).controls);
+  }
+
+  onFileComplete(data): void {
+    this.createFormGroup.get('imageDescriptionLink').setValue(data);
   }
 }

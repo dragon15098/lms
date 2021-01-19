@@ -59,3 +59,7 @@ tr.example-element-row:not(.example-expanded-row):active {
 h1{
   padding: 0 0 0 20px;
 }
+
+.center {
+  margin: 5px;
+}

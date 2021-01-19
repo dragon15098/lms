@@ -12,4 +12,5 @@ export interface User {
   studentDetail: StudentDetail;
   name: string;
   accessToken?: string;
+  imageUrl: string;
 }

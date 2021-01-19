@@ -10,6 +10,7 @@ import {DialogComponent} from '../../../base_component/dialog/dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Section} from '../../../../_model/section';
+import {LessonQuestionService} from '../../../../_service/lesson-question.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,7 +31,8 @@ export class CreateLessonComponent implements OnInit {
               private lessonService: LessonService,
               private dialog: MatDialog,
               private snackBar: MatSnackBar,
-              private cdf: ChangeDetectorRef) {
+              private cdf: ChangeDetectorRef,
+              private lessonQuestionService: LessonQuestionService) {
   }
 
   public Editor = ClassicEditor;
@@ -169,15 +171,17 @@ export class CreateLessonComponent implements OnInit {
     });
   }
 
-  deleteQuizQuestion(element: any, index: number): void {
-    const quizQuestion = element.value;
-    if (quizQuestion.id !== '') {
-      console.log('delete in server');
+  deleteLessonQuestion(element: any, index: number): void {
+    const lessonQuestion = element.value;
+    if (lessonQuestion.id !== '') {
+      this.lessonQuestionService.deleteLessonQuestion(lessonQuestion.id).subscribe(() => {
+        this.getQuestionFormArray().removeAt(index);
+        this.updateView();
+      });
     } else {
-      console.log('delete in html');
+      this.getQuestionFormArray().removeAt(index);
+      this.updateView();
     }
-    this.getQuestionFormArray().removeAt(index);
-    this.updateView();
   }
 
   onFileComplete(data: string): void {

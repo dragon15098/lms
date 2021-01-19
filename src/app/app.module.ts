@@ -40,6 +40,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {CreateCategoryComponent} from './component/category/create/create-category.component';
 import {CreateUserComponent} from './component/user/create-user/create-user.component';
 import {UserComponent} from './component/user/user.component';
+import {DialogApproveComponent} from './component/home/dialog-approve/dialog-approve.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import {UserComponent} from './component/user/user.component';
     FileUploadComponent,
     CreateCategoryComponent,
     CreateUserComponent,
-    UserComponent
+    UserComponent,
+    DialogApproveComponent
   ],
   imports: [
     BrowserModule,

@@ -76,6 +76,7 @@ export class CreateUserComponent implements OnInit {
       email: this.fb.control(''),
       phoneNumber: this.fb.control(''),
       roles: this.fb.control(''),
+      imageUrl: this.fb.control(''),
       instructorDetail: this.fb.group({
         aboutMe: this.fb.control(''),
         facebookLink: this.fb.control(''),
@@ -98,7 +99,7 @@ export class CreateUserComponent implements OnInit {
     this.user = this.userForm.value;
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '500px',
-      data: 'lesson'
+      data: 'user'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -117,4 +118,8 @@ export class CreateUserComponent implements OnInit {
     });
   }
 
+  onFileComplete(data: string): void {
+    console.log(data);
+    this.userForm.get('imageUrl').setValue(data);
+  }
 }

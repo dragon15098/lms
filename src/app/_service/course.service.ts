@@ -48,6 +48,6 @@ export class CourseService {
   }
 
   public approve(course: Course): Observable<Course> {
-    return this.httpService.post<Course>(`${environment.apiUrl}/course/approve`, {id: course.id});
+    return this.httpService.post<Course>(`${environment.apiUrl}/course/approve`, course);
   }
 }
