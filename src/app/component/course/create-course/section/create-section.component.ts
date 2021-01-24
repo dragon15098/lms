@@ -106,7 +106,7 @@ export class CreateSectionComponent implements OnInit {
   deleteQuizQuestion(element: any, index: number): void {
     const quizQuestion = element.value;
     if (quizQuestion.id !== '') {
-      this.quizQuestionService.deleteQuizQuestion(quizQuestion.id).subscribe(value => {
+      this.quizQuestionService.deleteQuizQuestion(quizQuestion.id).subscribe(() => {
         this.getQuestionFormArray().removeAt(index);
         this.updateQuizView();
       });
@@ -118,7 +118,11 @@ export class CreateSectionComponent implements OnInit {
   }
 
   onClickEditLesson(index: number): void {
-    this.nextTab.emit(this.section.lessons[index]);
+    if (this.section.lessons[index] !== undefined && this.section.lessons[index].id !== null) {
+      this.nextTab.emit(this.section.lessons[index]);
+    } else {
+      this.openSnackBar('Create lesson first', 'Oke');
+    }
   }
 
   onSubmit(): void {

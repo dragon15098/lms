@@ -13,6 +13,7 @@ import {UseService} from '../../../../_service/use.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SectionService} from '../../../../_service/section.service';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import {AuthenticationService} from '../../../../_service/authentication.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,7 +26,6 @@ export class CreateCourseComponent implements OnInit {
   submitted = false;
   createFormGroup: FormGroup;
   categories: Category[] = [];
-  instructors: User[] = [];
   editor = ClassicEditor;
   selectedCriteria: User;
 
@@ -46,7 +46,8 @@ export class CreateCourseComponent implements OnInit {
     private categoryService: CategoryService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private sectionService: SectionService) {
+    private sectionService: SectionService,
+    private authenticationService: AuthenticationService) {
   }
 
   ngOnInit(): void {
@@ -54,7 +55,8 @@ export class CreateCourseComponent implements OnInit {
       id: this.fb.control(''),
       title: this.fb.control(''),
       category: this.fb.control(''),
-      instructor: this.fb.control(''),
+      instructorName: this.fb.control({value: '', disabled: true}),
+      instructor: this.fb.control({}),
       description: this.fb.control(''),
       imageDescriptionLink: this.fb.control(''),
       sections: this.fb.array([])
@@ -64,18 +66,18 @@ export class CreateCourseComponent implements OnInit {
       this.categories = value;
     });
 
-    this.userService.getAllInstructor().subscribe(value => {
-      this.instructors = value;
-    });
     this.observerCourse();
   }
 
   private observerCourse(): void {
-    if (this.courseObservable !== null) {
+    if (this.courseObservable !== undefined && this.courseObservable !== null) {
       this.courseObservable.subscribe(value => {
         value.sections = [];
         this.createFormGroup.patchValue(value);
-        this.selectedCriteria = value.instructor;
+        const instructorNameForm = this.createFormGroup.get('instructorName') as FormGroup;
+        const instructorName = value.instructor.firstName + ' ' + value.instructor.lastName;
+        // @ts-ignore
+        instructorNameForm.setValue(instructorName);
         this.course = value;
         if (value.id != null) {
           this.sectionService.getAllSectionByCourse(value).subscribe(value1 => {
@@ -109,9 +111,24 @@ export class CreateCourseComponent implements OnInit {
     });
   }
 
+  public checkRole(): boolean {
+    const token = this.authenticationService.currentUserValue;
+    let canAccess = false;
+    token.user.roles.forEach(role => {
+      if (role.id === 1) {
+        canAccess = true;
+      }
+    });
+    return canAccess;
+  }
+
   public onClickLesson(index: number): void {
-    const data = {section: this.course.sections[index], course: this.course};
-    this.nextTab.emit(data);
+    if (this.course !== undefined) {
+      const data = {section: this.course.sections[index], course: this.course};
+      this.nextTab.emit(data);
+    } else {
+      this.openSnackBar('Create section first', 'Oke');
+    }
   }
 
   validCourse(course: Course): boolean {
