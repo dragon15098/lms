@@ -103,7 +103,7 @@
       <td mat-cell *matCellDef="let element; let row; let i = index">
         <button type="button" (click)="onClickCourseDetail(row)" mat-button>Edit lesson</button>
 
-        <button *ngIf="element.status === 'WAIT'" type="button" (click)="onClickApprove(i)" mat-button>Approve lesson
+        <button *ngIf="checkStatusAndRole(element)" type="button" (click)="onClickApprove(i)" mat-button>Approve lesson
         </button>
       </td>
 

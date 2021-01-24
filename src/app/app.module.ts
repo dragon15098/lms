@@ -41,6 +41,7 @@ import {CreateCategoryComponent} from './component/category/create/create-catego
 import {CreateUserComponent} from './component/user/create-user/create-user.component';
 import {UserComponent} from './component/user/user.component';
 import {DialogApproveComponent} from './component/home/dialog-approve/dialog-approve.component';
+import {ForbiddenComponent} from './component/403/forbidden.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import {DialogApproveComponent} from './component/home/dialog-approve/dialog-app
     CreateCategoryComponent,
     CreateUserComponent,
     UserComponent,
-    DialogApproveComponent
+    DialogApproveComponent,
+    ForbiddenComponent
   ],
   imports: [
     BrowserModule,

@@ -9,7 +9,6 @@ export class QuizQuestionService {
   }
 
   public deleteQuizQuestion(questionId: number): Observable<any> {
-    console.log(`${environment.apiUrl}/quiz_question/${questionId}`);
     return this.httpService.delete<any>(`${environment.apiUrl}/quiz_question/${questionId}`);
   }
 

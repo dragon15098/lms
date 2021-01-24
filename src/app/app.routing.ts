@@ -9,9 +9,12 @@ import {CategoryComponent} from './component/category/category.component';
 import {CreateCategoryComponent} from './component/category/create/create-category.component';
 import {UserComponent} from './component/user/user.component';
 import {CreateUserComponent} from './component/user/create-user/create-user.component';
+import {ForbiddenComponent} from './component/403/forbidden.component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
+  {path: 'logout', component: LoginComponent},
+  {path: 'forbidden', component: ForbiddenComponent},
   {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   {path: 'course', component: HomeComponent, canActivate: [AuthGuard]},
   {path: 'categories', component: CategoryComponent, canActivate: [AuthGuard]},

@@ -1,5 +1,6 @@
 import {InstructorDetail} from './instructor-detail';
 import {StudentDetail} from './student-detail';
+import {Role} from './role';
 
 export interface User {
   id: number;
@@ -13,4 +14,5 @@ export interface User {
   name: string;
   accessToken?: string;
   imageUrl: string;
+  roles: Role[];
 }

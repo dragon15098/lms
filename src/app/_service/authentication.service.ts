@@ -1,31 +1,39 @@
 import {map} from 'rxjs/operators';
-import {User} from '../_model/user';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment.prod';
+import {Token} from '../_model/token';
 
 @Injectable({providedIn: 'root'})
 export class AuthenticationService {
-  private currentUserSubject: BehaviorSubject<User>;
-  public currentUser: Observable<User>;
+  currentUserSubject: BehaviorSubject<Token>;
+  public currentUser: Observable<Token>;
 
   constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
-    this.currentUser = this.currentUserSubject.asObservable();
+    const tokenS = localStorage.getItem('currentUser');
+    if (tokenS !== null && tokenS !== '') {
+      this.currentUserSubject = new BehaviorSubject<Token>(JSON.parse(tokenS));
+      this.currentUser = this.currentUserSubject.asObservable();
+    }
   }
 
-  public get currentUserValue(): User {
+  public get currentUserValue(): Token {
+    if (this.currentUserSubject === undefined) {
+      return null;
+    }
     return this.currentUserSubject.value;
   }
 
   login(username: string, password: string): any {
     return this.http.post<any>(`${environment.apiUrl}/login`, {username, password})
-      .pipe(map(user => {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(user);
-        return user;
+      .pipe(map(token => {
+        // store token details and jwt token in local storage to keep token logged in between page refreshes
+        localStorage.setItem('currentUser', JSON.stringify(token));
+        this.currentUserSubject.next(token);
+        this.currentUserSubject = new BehaviorSubject<Token>(token);
+        this.currentUser = this.currentUserSubject.asObservable();
+        return token;
       }));
   }
 
@@ -33,5 +41,11 @@ export class AuthenticationService {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+  }
+
+  clear(): void {
+    if (this.currentUserSubject !== undefined) {
+      this.currentUserSubject.next(null);
+    }
   }
 }

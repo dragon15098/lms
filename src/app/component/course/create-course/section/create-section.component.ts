@@ -118,12 +118,10 @@ export class CreateSectionComponent implements OnInit {
   }
 
   onClickEditLesson(index: number): void {
-    console.log(this.section);
     this.nextTab.emit(this.section.lessons[index]);
   }
 
   onSubmit(): void {
-    console.log(this.sectionForm.value);
     const section = this.sectionForm.value;
     section.course = this.course;
     this.insertOrUpdateLesson(section);
@@ -138,7 +136,6 @@ export class CreateSectionComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         this.sectionService.insertOrUpdate(section).subscribe(value => {
-          console.log(value);
           this.sectionForm.patchValue(value);
           this.section = value;
           this.openSnackBar('Success', 'Oke');
@@ -160,7 +157,6 @@ export class CreateSectionComponent implements OnInit {
   }
 
   onCheckCorrectAnswer(questionIndex: number, answerIndex: number): void {
-    console.log(questionIndex + ' ' + answerIndex);
     const questionFormArray = this.getQuestionFormArray();
     const currentQuestionForm = questionFormArray.controls[questionIndex];
     const answersFormArray = this.getFormArrayAnswer(questionIndex);
@@ -174,7 +170,6 @@ export class CreateSectionComponent implements OnInit {
         activeForm.patchValue(true);
       }
     }
-    console.log(this.sectionForm.value);
   }
 
   public newLessonFormGroup(): FormGroup {

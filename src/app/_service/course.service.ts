@@ -17,7 +17,6 @@ export class CourseService {
                       createTo: string,
                       instructor: string,
                       status: string): Observable<Page<Course>> {
-    console.log(listCategory);
     if (listCategory != null) {
       if (status === undefined) {
         status = '';

@@ -10,6 +10,8 @@ import {CategoryService} from '../../_service/category.service';
 import {Category} from '../../_model/category';
 import {MatDialog} from '@angular/material/dialog';
 import {DialogApproveComponent} from './dialog-approve/dialog-approve.component';
+import {AuthenticationService} from '../../_service/authentication.service';
+import has = Reflect.has;
 
 
 @Component({
@@ -33,7 +35,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
               private snackBar: MatSnackBar,
               private categoryService: CategoryService,
               private router: Router,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private authenticationService: AuthenticationService) {
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -115,8 +118,6 @@ export class HomeComponent implements AfterViewInit, OnInit {
     dialogRef.afterClosed().subscribe(price => {
       if (price !== undefined) {
         course.price = price;
-        console.log(price);
-        console.log(course);
         this.approveCourse(course);
       }
     });
@@ -131,6 +132,16 @@ export class HomeComponent implements AfterViewInit, OnInit {
     });
   }
 
+  checkStatusAndRole(course: Course): boolean {
+    const token = this.authenticationService.currentUserValue;
+    let hasRole = false;
+    token.user.roles.forEach(role => {
+      if (role.id === 1) {
+        hasRole = true;
+      }
+    });
+    return course.status === 'WAIT' && hasRole;
+  }
 
   openSnackBar(message: string, action: string): void {
     this.snackBar.open(message, action, {

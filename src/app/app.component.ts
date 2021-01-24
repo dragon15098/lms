@@ -3,6 +3,7 @@ import {AuthenticationService} from './_service/authentication.service';
 import {Router} from '@angular/router';
 import {User} from './_model/user';
 import {MediaMatcher} from '@angular/cdk/layout';
+import {Token} from './_model/token';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,7 @@ import {MediaMatcher} from '@angular/cdk/layout';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnDestroy {
-  currentUser: User;
+  currentUser: Token;
 
   constructor(
     private router: Router,
@@ -18,15 +19,18 @@ export class AppComponent implements OnDestroy {
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher
   ) {
-    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+    const token = this.authenticationService.currentUser;
+    if (token !== undefined) {
+      token.subscribe(x => this.currentUser = x);
+    }
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this.mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this.mobileQueryListener);
   }
 
   mobileQuery: MediaQueryList;
-  fillerNav: Array<string> = ['Course', 'Categories', 'User', 'Home'];
-  routeNav: Array<string> = ['course', 'categories', 'user', 'home'];
+  fillerNav: Array<string> = ['Course', 'Categories', 'User', 'Home', 'Logout'];
+  routeNav: Array<string> = ['course', 'categories', 'user', 'home', 'logout'];
   private readonly mobileQueryListener: () => void;
 
   ngOnDestroy(): void {

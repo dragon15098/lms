@@ -52,7 +52,6 @@ export class CreateUserComponent implements OnInit {
 
   private getUserDetail(userId: number): void {
     this.userService.getUserDetail(userId).subscribe(value => {
-      console.log(value);
       this.userForm.patchValue(value);
     });
   }
@@ -119,7 +118,6 @@ export class CreateUserComponent implements OnInit {
   }
 
   onFileComplete(data: string): void {
-    console.log(data);
     this.userForm.get('imageUrl').setValue(data);
   }
 }

@@ -65,7 +65,6 @@ export class CreateLessonComponent implements OnInit {
     this.resetFormControl();
     if (this.lesson !== undefined) {
       this.lessonService.getDetail(this.lesson.id).subscribe(lessonResponse => {
-        console.log(lessonResponse);
         this.lesson = lessonResponse;
         lessonResponse.lessonQuestions.forEach(question => {
           this.setAnswerForEachQuestion(question);
@@ -98,7 +97,6 @@ export class CreateLessonComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-        console.log(lesson);
         this.lessonService.insertOrUpdate(lesson).subscribe(value => {
           this.lesson = value;
           this.lessonForm.patchValue(value);
@@ -115,7 +113,6 @@ export class CreateLessonComponent implements OnInit {
   }
 
   onCheckCorrectAnswer(indexQuestion: number, answerIndex: number): void {
-    console.log(indexQuestion + ' ' + answerIndex);
     const questionsFormArray = this.lessonForm.get('lessonQuestions') as FormArray;
     const questionFromGroup = questionsFormArray.controls[indexQuestion];
     const answersFormArray = questionFromGroup.get('lessonAnswers') as FormArray;
@@ -129,7 +126,6 @@ export class CreateLessonComponent implements OnInit {
         activeForm.patchValue(true);
       }
     }
-    console.log(this.lessonForm.value);
   }
 
   resetFormControl(): void {
@@ -146,7 +142,6 @@ export class CreateLessonComponent implements OnInit {
     const lessonQuestions = this.lessonForm.get('lessonQuestions') as FormArray;
     lessonQuestions.push(this.createNewLessonQuestionForm());
     this.updateView();
-    console.log(this.lessonForm);
   }
 
   createNewLessonQuestionForm(): FormGroup {
@@ -185,7 +180,6 @@ export class CreateLessonComponent implements OnInit {
   }
 
   onFileComplete(data: string): void {
-    console.log(data);
     this.lessonForm.get('urlVideo').setValue(data);
   }
 

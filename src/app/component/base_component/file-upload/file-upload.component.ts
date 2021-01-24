@@ -79,14 +79,12 @@ export class FileUploadComponent {
         }),
       last(),
       catchError( error => {
-        console.log(error);
         file.inProgress = false;
         file.canRetry = true;
         return of(`${file.data.name} upload failed.`);
       })
     ).subscribe(
       (event: any) => {
-        console.log(event);
         if (typeof (event) === 'object') {
           this.removeFileFromArray(file);
           this.onComplete.emit(event.body);

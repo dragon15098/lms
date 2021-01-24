@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Category} from '../../_model/category';
-import {PageEvent} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl, FormGroup} from '@angular/forms';
 import {CategoryService} from '../../_service/category.service';
@@ -11,11 +11,17 @@ import {Router} from '@angular/router';
   templateUrl: 'category.component.html',
   styleUrls: ['category.component.css']
 })
-export class CategoryComponent implements OnInit {
+export class CategoryComponent implements AfterViewInit, OnInit {
   displayedColumns: string[] = ['position', 'name'];
   searchForm: FormGroup;
   dataSource = new MatTableDataSource<Category>();
   submitted = false;
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
 
   constructor(private categoryService: CategoryService,
               private router: Router) {
@@ -33,12 +39,10 @@ export class CategoryComponent implements OnInit {
     this.categoryService.getAll().subscribe(value => {
       this.dataSource.data = value;
       this.submitted = false;
-      console.log(value);
     });
   }
 
   onClickCategoryDetail(row: Category): void {
-    console.log(row);
   }
 
   createNewCategory(): void {
@@ -47,6 +51,5 @@ export class CategoryComponent implements OnInit {
 
 
   public onPage(event: PageEvent): void {
-    console.log(event);
   }
 }

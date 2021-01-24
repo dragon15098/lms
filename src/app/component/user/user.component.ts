@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {PageEvent} from '@angular/material/paginator';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Router} from '@angular/router';
@@ -11,7 +11,7 @@ import {User} from '../../_model/user';
   templateUrl: 'user.component.html',
   styleUrls: ['user.component.css']
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements AfterViewInit, OnInit {
   displayedColumns: string[] = ['position', 'firstName', 'lastName', 'email', 'phoneNumber', 'role'];
   searchForm: FormGroup;
   dataSource = new MatTableDataSource<User>();
@@ -19,6 +19,12 @@ export class UserComponent implements OnInit {
 
   constructor(private userService: UseService,
               private router: Router) {
+  }
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   ngOnInit(): void {
@@ -33,7 +39,6 @@ export class UserComponent implements OnInit {
     this.userService.getAllUser().subscribe(value => {
       this.dataSource.data = value;
       this.submitted = false;
-      console.log(value);
     });
   }
 
@@ -47,6 +52,5 @@ export class UserComponent implements OnInit {
 
 
   public onPage(event: PageEvent): void {
-    console.log(event);
   }
 }

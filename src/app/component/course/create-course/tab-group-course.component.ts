@@ -58,7 +58,6 @@ export class TabGroupCourseComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log(this.id);
     if (this.id !== undefined && this.id !== 0) {
       this.courseObservable = this.courseService.getCourseDetail(this.id);
     }
